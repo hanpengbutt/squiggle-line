@@ -1,0 +1,49 @@
+{
+  "name": "@squiggle-line/react",
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hanpengbutt/squiggle-line.git"
+  },
+  "description": "React bindings for @squiggle-line/core — WobblyBox, WobblyShape components and hooks",
+  "keywords": [
+    "react",
+    "svg",
+    "doodle",
+    "hand-drawn",
+    "squiggle",
+    "wiggle"
+  ],
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "lint": "eslint src --max-warnings 0"
+  },
+  "peerDependencies": {
+    "react": ">=19.0.0",
+    "react-dom": ">=19.0.0"
+  },
+  "devDependencies": {
+    "@squiggle-line/eslint-config": "workspace:*",
+    "@squiggle-line/typescript-config": "workspace:*",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0"
+  },
+  "dependencies": {
+    "@squiggle-line/core": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
