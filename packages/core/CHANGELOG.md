@@ -1,5 +1,11 @@
 # @squiggle-line/core
 
+## 0.1.1
+
+### Patch Changes
+
+- 7803469: Add GitHub Actions release workflow with Trusted Publishing
+
 ## 0.2.0
 
 ### Minor Changes

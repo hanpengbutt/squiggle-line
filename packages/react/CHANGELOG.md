@@ -1,5 +1,13 @@
 # @squiggle-line/react
 
+## 0.1.1
+
+### Patch Changes
+
+- 7803469: Add GitHub Actions release workflow with Trusted Publishing
+- Updated dependencies [7803469]
+  - @squiggle-line/core@0.1.1
+
 ## 0.2.0
 
 ### Minor Changes
