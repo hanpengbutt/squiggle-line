@@ -1,0 +1,8 @@
+{
+  "name": "Squiggle — Hand-drawn Stroke",
+  "id": "squiggle-hand-drawn-stroke",
+  "api": "1.0.0",
+  "main": "dist/code.js",
+  "ui": "dist/index.html",
+  "editorType": ["figma"]
+}
