@@ -1,0 +1,12 @@
+{
+  "name": "@squiggle-line/typescript-config",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "exports": {
+    "./base.json": "./base.json",
+    "./library.json": "./library.json",
+    "./react.json": "./react.json"
+  },
+  "files": ["*.json"]
+}
