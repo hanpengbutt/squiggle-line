@@ -1,5 +1,5 @@
-import type { Point, SquiggleParams } from './types.js';
-import { createPRNG, createIrregularNoise } from './noise.js';
+import type { Point, SquiggleParams } from "./types.js";
+import { createPRNG, createIrregularNoise } from "./noise.js";
 
 /**
  * 각 점의 Normal 계산
@@ -7,7 +7,9 @@ import { createPRNG, createIrregularNoise } from './noise.js';
 export function calculateNormals(points: Point[]): Point[] {
   const n = points.length;
   if (n < 2) return points.map(() => ({ x: 0, y: 0 }));
-  const isClosed = Math.hypot(points[n - 1].x - points[0].x, points[n - 1].y - points[0].y) < 5;
+  const isClosed =
+    Math.hypot(points[n - 1].x - points[0].x, points[n - 1].y - points[0].y) <
+    5;
 
   const cx = points.reduce((sum, p) => sum + p.x, 0) / n;
   const cy = points.reduce((sum, p) => sum + p.y, 0) / n;
@@ -55,7 +57,9 @@ export function smoothPoints(points: Point[], amount: number): Point[] {
   const alpha = amount / 100;
   const n = points.length;
   if (n < 3) return [...points];
-  const isClosed = Math.hypot(points[n - 1].x - points[0].x, points[n - 1].y - points[0].y) < 5;
+  const isClosed =
+    Math.hypot(points[n - 1].x - points[0].x, points[n - 1].y - points[0].y) <
+    5;
 
   return points.map((point, i) => {
     let prevIndex = i - 1;
@@ -113,13 +117,16 @@ function getCornerDamping(points: Point[], i: number): number {
  * Wiggle 적용 (Seeded noise + box-scale amplitude + Corner Protection)
  */
 export function applyWiggle(points: Point[], params: SquiggleParams): Point[] {
-  const { frequency, wiggle, smoothen, seed = 42 } = params;
+  const frequency = Math.max(10, Math.min(500, params.frequency));
+  const wiggle = Math.max(0, Math.min(100, params.wiggle));
+  const smoothen = Math.max(0, Math.min(100, params.smoothen));
+  const seed = params.seed ?? 42;
 
   if (points.length < 2) return points;
 
   // Bounding box 계산
-  const xs = points.map(p => p.x);
-  const ys = points.map(p => p.y);
+  const xs = points.map((p) => p.x);
+  const ys = points.map((p) => p.y);
   const width = Math.max(...xs) - Math.min(...xs) || 100;
   const height = Math.max(...ys) - Math.min(...ys) || 100;
 
