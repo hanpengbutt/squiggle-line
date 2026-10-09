@@ -1,7 +1,11 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { useSquigglePath } from './hooks/useSquigglePath.js';
-import { useSpeechBubblePath } from './hooks/useSpeechBubblePath.js';
-import type { WobblySpeechBubbleProps } from './types.js';
+import React, { useRef, useState, useEffect } from "react";
+import { useSquigglePath } from "./hooks/useSquigglePath.js";
+import { useSpeechBubblePath } from "./hooks/useSpeechBubblePath.js";
+import type { WobblySpeechBubbleProps } from "./types.js";
+
+const DEFAULT_STROKE = "#1a1a1a";
+const DEFAULT_STROKE_WIDTH = 2;
+const DEFAULT_FILL = "white";
 
 /**
  * 텍스트 크기에 맞게 자동으로 조절되는 wobbly 말풍선 컴포넌트.
@@ -26,21 +30,25 @@ export const WobblySpeechBubble: React.FC<WobblySpeechBubbleProps> = ({
   maxWidth,
   padding = 16,
   borderRadius = 16,
-  tailType = 'pointed',
+  tailType = "pointed",
   tailWidth = 24,
   tailHeight = 20,
   frequency = 200,
   wiggle = 12,
   smoothen = 74,
-  strokeWidth = 2,
-  stroke = '#1a1a1a',
-  fill = 'white',
+  strokeWidth,
+  stroke,
+  fill,
   seed = 42,
   className,
+  pathClassName,
   style,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({ width: 0, height: 0 });
+
+  // 계산용 선 굵기 (prop 미지정 시 기본값)
+  const sw = strokeWidth ?? DEFAULT_STROKE_WIDTH;
 
   // children 크기 변화 감지 (WobblyBox와 동일한 패턴)
   useEffect(() => {
@@ -70,21 +78,21 @@ export const WobblySpeechBubble: React.FC<WobblySpeechBubbleProps> = ({
     frequency,
     wiggle,
     smoothen,
-    strokeWidth,
+    strokeWidth: sw,
     seed,
   });
 
   // 흔들림 진폭에 따라 SVG 오버플로우 여백 계산
   const amplitude = Math.min(size.width, size.height) * (wiggle / 100) * 0.22;
-  const svgPadding = Math.ceil(amplitude) + strokeWidth + 8;
+  const svgPadding = Math.ceil(amplitude) + sw + 8;
 
   return (
     <div
       ref={containerRef}
       className={className}
       style={{
-        position: 'relative',
-        display: 'inline-block',
+        position: "relative",
+        display: "inline-block",
         maxWidth,
         ...style,
       }}
@@ -94,22 +102,26 @@ export const WobblySpeechBubble: React.FC<WobblySpeechBubbleProps> = ({
         <svg
           aria-hidden="true"
           style={{
-            position: 'absolute',
+            position: "absolute",
             top: -svgPadding,
             left: -svgPadding,
             width: size.width + svgPadding * 2,
             height: size.height + svgPadding * 2,
-            pointerEvents: 'none',
-            overflow: 'visible',
+            pointerEvents: "none",
+            overflow: "visible",
           }}
-          viewBox={`${-svgPadding} ${-svgPadding} ${size.width + svgPadding * 2} ${size.height + svgPadding * 2}`}
+          viewBox={`${-svgPadding} ${-svgPadding} ${
+            size.width + svgPadding * 2
+          } ${size.height + svgPadding * 2}`}
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
             d={wobblyPath}
-            stroke={stroke}
-            strokeWidth={strokeWidth}
-            fill={fill}
+            className={pathClassName}
+            stroke={DEFAULT_STROKE}
+            strokeWidth={DEFAULT_STROKE_WIDTH}
+            fill={DEFAULT_FILL}
+            style={{ stroke, strokeWidth, fill }}
             strokeLinecap="round"
             strokeLinejoin="round"
           />
@@ -119,10 +131,10 @@ export const WobblySpeechBubble: React.FC<WobblySpeechBubbleProps> = ({
       {/* 실제 콘텐츠 — SVG fill 위로 올라오도록 z-index 지정 */}
       <div
         style={{
-          position: 'relative',
+          position: "relative",
           zIndex: 1,
           padding,
-          boxSizing: 'border-box',
+          boxSizing: "border-box",
         }}
       >
         {children}

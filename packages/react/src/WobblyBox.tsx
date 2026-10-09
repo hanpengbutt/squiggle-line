@@ -1,6 +1,10 @@
-import React, { useRef, useState, useEffect, useCallback } from 'react';
-import { useSquigglePath } from './hooks/useSquigglePath.js';
-import type { WobblyBoxProps } from './types.js';
+import React, { useRef, useState, useEffect, useCallback } from "react";
+import { useSquigglePath } from "./hooks/useSquigglePath.js";
+import type { WobblyBoxProps } from "./types.js";
+
+const DEFAULT_STROKE = "#1a1a1a";
+const DEFAULT_STROKE_WIDTH = 2;
+const DEFAULT_FILL = "none";
 
 /**
  * children을 감싸고, 컨텐츠 크기에 맞게 wobbly border를 동적으로 렌더링하는 컴포넌트.
@@ -24,17 +28,21 @@ export const WobblyBox: React.FC<WobblyBoxProps> = ({
   frequency = 200,
   wiggle = 16,
   smoothen = 74,
-  strokeWidth = 2,
-  stroke = '#1a1a1a',
-  fill = 'none',
+  strokeWidth,
+  stroke,
+  fill,
   seed = 42,
   borderRadius = 0,
   padding: paddingProp,
   className,
+  pathClassName,
   style,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({ width: 0, height: 0 });
+
+  // 계산용 선 굵기 (prop 미지정 시 기본값)
+  const sw = strokeWidth ?? DEFAULT_STROKE_WIDTH;
 
   // children 크기 변화 감지
   useEffect(() => {
@@ -58,40 +66,44 @@ export const WobblyBox: React.FC<WobblyBoxProps> = ({
     frequency,
     wiggle,
     smoothen,
-    strokeWidth,
+    strokeWidth: sw,
     seed,
   });
 
   const amplitude = Math.min(size.width, size.height) * (wiggle / 100) * 0.22;
-  const svgPadding = paddingProp ?? Math.ceil(amplitude) + strokeWidth + 8;
+  const svgPadding = paddingProp ?? Math.ceil(amplitude) + sw + 8;
 
   return (
     <div
       ref={containerRef}
       className={className}
-      style={{ position: 'relative', display: 'inline-block', ...style }}
+      style={{ position: "relative", display: "inline-block", ...style }}
     >
       {/* Wobbly SVG overlay */}
       {size.width > 0 && wobblyPath && (
         <svg
           aria-hidden="true"
           style={{
-            position: 'absolute',
+            position: "absolute",
             top: -svgPadding,
             left: -svgPadding,
             width: size.width + svgPadding * 2,
             height: size.height + svgPadding * 2,
-            pointerEvents: 'none',
-            overflow: 'visible',
+            pointerEvents: "none",
+            overflow: "visible",
           }}
-          viewBox={`${-svgPadding} ${-svgPadding} ${size.width + svgPadding * 2} ${size.height + svgPadding * 2}`}
+          viewBox={`${-svgPadding} ${-svgPadding} ${
+            size.width + svgPadding * 2
+          } ${size.height + svgPadding * 2}`}
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
             d={wobblyPath}
-            stroke={stroke}
-            strokeWidth={strokeWidth}
-            fill={fill}
+            className={pathClassName}
+            stroke={DEFAULT_STROKE}
+            strokeWidth={DEFAULT_STROKE_WIDTH}
+            fill={DEFAULT_FILL}
+            style={{ stroke, strokeWidth, fill }}
             strokeLinecap="round"
             strokeLinejoin="round"
           />
@@ -109,9 +121,13 @@ export const WobblyBox: React.FC<WobblyBoxProps> = ({
  * - borderRadius=0: 직각 사각형 (Z로 닫힘 → closed path → outward normal 적용)
  * - borderRadius>0: 둥근 사각형 (Q 커맨드 사용)
  */
-function useBoxPath(width: number, height: number, borderRadius: number): string {
+function useBoxPath(
+  width: number,
+  height: number,
+  borderRadius: number,
+): string {
   return useCallback(() => {
-    if (width === 0 || height === 0) return '';
+    if (width === 0 || height === 0) return "";
     const r = Math.min(borderRadius, width / 2, height / 2);
 
     if (r <= 0) {
@@ -128,7 +144,7 @@ function useBoxPath(width: number, height: number, borderRadius: number): string
       `Q 0 ${height} 0 ${height - r}`,
       `L 0 ${r}`,
       `Q 0 0 ${r} 0`,
-      'Z',
-    ].join(' ');
+      "Z",
+    ].join(" ");
   }, [width, height, borderRadius])();
 }
