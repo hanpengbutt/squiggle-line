@@ -1,5 +1,16 @@
 # @squiggle-line/react
 
+## 0.2.0
+
+### Minor Changes
+
+- a6e4bed: Add pathClassName to support Tailwind and clamp core parameters
+
+### Patch Changes
+
+- Updated dependencies [a6e4bed]
+  - @squiggle-line/core@0.2.0
+
 ## 0.1.1
 
 ### Patch Changes

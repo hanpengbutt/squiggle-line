@@ -1,5 +1,12 @@
 # @squiggle-line/demo
 
+## 0.0.3
+
+### Patch Changes
+
+- Updated dependencies [a6e4bed]
+  - @squiggle-line/react@0.2.0
+
 ## 0.0.2
 
 ### Patch Changes
