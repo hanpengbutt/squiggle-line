@@ -1,5 +1,11 @@
 # @squiggle-line/react
 
+## 0.3.0
+
+### Minor Changes
+
+- ba0edf0: Add configurable dashed strokes with adjustable dash length, gap, and offset
+
 ## 0.2.0
 
 ### Minor Changes
