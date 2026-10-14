@@ -6,3 +6,5 @@ coverage
 *.local
 .env
 .DS_Store
+AGENTS.md
+.agents/
