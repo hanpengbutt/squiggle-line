@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import { WobblyBox } from '@squiggle-line/react';
-import { SliderProp, ColorProp, FillProp, TextareaProp, SectionTitle } from '../components/PropControl';
+import { SliderProp, ColorProp, FillProp, TextareaProp, SectionTitle, DashControls } from '../components/PropControl';
 
 export function WobblyBoxDemo() {
   const [frequency, setFrequency] = useState(200);
   const [wiggle, setWiggle] = useState(16);
   const [smoothen, setSmoothen] = useState(74);
   const [strokeWidth, setStrokeWidth] = useState(2.5);
+  const [dashEnabled, setDashEnabled] = useState(false);
+  const [dashLength, setDashLength] = useState(8);
+  const [dashGap, setDashGap] = useState(8);
+  const [strokeDashoffset, setStrokeDashoffset] = useState(0);
   const [stroke, setStroke] = useState('#1a1a1a');
   const [fill, setFill] = useState('none');
   const [borderRadius, setBorderRadius] = useState(12);
@@ -21,6 +25,9 @@ export function WobblyBoxDemo() {
           wiggle={wiggle}
           smoothen={smoothen}
           strokeWidth={strokeWidth}
+          dashLength={dashEnabled ? dashLength : undefined}
+          dashGap={dashEnabled ? dashGap : undefined}
+          strokeDashoffset={dashEnabled ? strokeDashoffset : undefined}
           stroke={stroke}
           fill={fill}
           borderRadius={borderRadius}
@@ -40,6 +47,16 @@ export function WobblyBoxDemo() {
 
         <SectionTitle>Stroke</SectionTitle>
         <SliderProp label="strokeWidth" value={strokeWidth} min={0.5} max={10} step={0.5} onChange={setStrokeWidth} />
+        <DashControls
+          enabled={dashEnabled}
+          onEnabledChange={setDashEnabled}
+          dashLength={dashLength}
+          onDashLengthChange={setDashLength}
+          dashGap={dashGap}
+          onDashGapChange={setDashGap}
+          strokeDashoffset={strokeDashoffset}
+          onStrokeDashoffsetChange={setStrokeDashoffset}
+        />
         <ColorProp label="stroke" value={stroke} onChange={setStroke} />
         <FillProp value={fill} onChange={setFill} />
 

@@ -196,6 +196,18 @@ body {
   flex-shrink: 0;
 }
 
+.prop-row.dash-toggle {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dash-toggle input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+}
+
 .prop-label-row {
   display: flex;
   justify-content: space-between;

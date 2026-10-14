@@ -37,6 +37,44 @@ export function SliderProp({ label, value, min, max, step = 1, onChange }: Slide
   );
 }
 
+interface DashControlsProps {
+  enabled: boolean;
+  onEnabledChange: (enabled: boolean) => void;
+  dashLength: number;
+  onDashLengthChange: (value: number) => void;
+  dashGap: number;
+  onDashGapChange: (value: number) => void;
+  strokeDashoffset: number;
+  onStrokeDashoffsetChange: (value: number) => void;
+}
+
+export function DashControls({
+  enabled,
+  onEnabledChange,
+  dashLength,
+  onDashLengthChange,
+  dashGap,
+  onDashGapChange,
+  strokeDashoffset,
+  onStrokeDashoffsetChange,
+}: DashControlsProps) {
+  return (
+    <>
+      <label className="prop-row dash-toggle">
+        <span className="prop-label">dashed stroke</span>
+        <input type="checkbox" checked={enabled} onChange={e => onEnabledChange(e.target.checked)} />
+      </label>
+      {enabled && (
+        <>
+          <SliderProp label="dashLength" value={dashLength} min={0} max={24} onChange={onDashLengthChange} />
+          <SliderProp label="dashGap" value={dashGap} min={0} max={24} onChange={onDashGapChange} />
+          <SliderProp label="strokeDashoffset" value={strokeDashoffset} min={-24} max={24} onChange={onStrokeDashoffsetChange} />
+        </>
+      )}
+    </>
+  );
+}
+
 // ── Color picker ───────────────────────────────────────────────
 interface ColorPropProps {
   label: string;

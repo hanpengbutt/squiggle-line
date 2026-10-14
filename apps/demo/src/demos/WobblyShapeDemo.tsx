@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { WobblyShape } from '@squiggle-line/react';
-import { SliderProp, ColorProp, FillProp, SelectProp, SectionTitle } from '../components/PropControl';
+import { SliderProp, ColorProp, FillProp, SelectProp, SectionTitle, DashControls } from '../components/PropControl';
 
 const PRESETS: Record<string, { d: string; width: number; height: number }> = {
   circle: {
@@ -38,6 +38,10 @@ export function WobblyShapeDemo() {
   const [wiggle, setWiggle] = useState(16);
   const [smoothen, setSmoothen] = useState(74);
   const [strokeWidth, setStrokeWidth] = useState(2.5);
+  const [dashEnabled, setDashEnabled] = useState(false);
+  const [dashLength, setDashLength] = useState(8);
+  const [dashGap, setDashGap] = useState(8);
+  const [strokeDashoffset, setStrokeDashoffset] = useState(0);
   const [stroke, setStroke] = useState('#a78bfa');
   const [fill, setFill] = useState('none');
   const [seed, setSeed] = useState(42);
@@ -55,6 +59,9 @@ export function WobblyShapeDemo() {
           wiggle={wiggle}
           smoothen={smoothen}
           strokeWidth={strokeWidth}
+          dashLength={dashEnabled ? dashLength : undefined}
+          dashGap={dashEnabled ? dashGap : undefined}
+          strokeDashoffset={dashEnabled ? strokeDashoffset : undefined}
           stroke={stroke}
           fill={fill}
           seed={seed}
@@ -72,6 +79,16 @@ export function WobblyShapeDemo() {
 
         <SectionTitle>Stroke</SectionTitle>
         <SliderProp label="strokeWidth" value={strokeWidth} min={0.5} max={10} step={0.5} onChange={setStrokeWidth} />
+        <DashControls
+          enabled={dashEnabled}
+          onEnabledChange={setDashEnabled}
+          dashLength={dashLength}
+          onDashLengthChange={setDashLength}
+          dashGap={dashGap}
+          onDashGapChange={setDashGap}
+          strokeDashoffset={strokeDashoffset}
+          onStrokeDashoffsetChange={setStrokeDashoffset}
+        />
         <ColorProp label="stroke" value={stroke} onChange={setStroke} />
         <FillProp value={fill} onChange={setFill} />
 
