@@ -40,6 +40,11 @@ import { WobblyBox, WobblyShape, useSquigglePath } from '@squiggle-line/react';
   <p>어떤 컨텐츠든 자동으로 맞춰짐</p>
 </WobblyBox>
 
+// 점선 테두리 (간격이나 선분 길이만 지정하면 다른 값은 기본값 8px 사용)
+<WobblyBox dashLength={12} dashGap={8} strokeDashoffset={2}>
+  <p>점선 테두리</p>
+</WobblyBox>
+
 // 커스텀 SVG path에 효과 적용
 <WobblyShape
   d="M 0 50 C 100 0 200 100 300 50"

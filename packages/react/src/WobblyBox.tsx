@@ -5,6 +5,8 @@ import type { WobblyBoxProps } from "./types.js";
 const DEFAULT_STROKE = "#1a1a1a";
 const DEFAULT_STROKE_WIDTH = 2;
 const DEFAULT_FILL = "none";
+const DEFAULT_DASH_LENGTH = 8;
+const DEFAULT_DASH_GAP = 8;
 
 /**
  * children을 감싸고, 컨텐츠 크기에 맞게 wobbly border를 동적으로 렌더링하는 컴포넌트.
@@ -31,6 +33,9 @@ export const WobblyBox: React.FC<WobblyBoxProps> = ({
   strokeWidth,
   stroke,
   fill,
+  dashLength,
+  dashGap,
+  strokeDashoffset,
   seed = 42,
   borderRadius = 0,
   padding: paddingProp,
@@ -43,6 +48,10 @@ export const WobblyBox: React.FC<WobblyBoxProps> = ({
 
   // 계산용 선 굵기 (prop 미지정 시 기본값)
   const sw = strokeWidth ?? DEFAULT_STROKE_WIDTH;
+  const strokeDasharray =
+    dashLength === undefined && dashGap === undefined
+      ? undefined
+      : `${dashLength ?? DEFAULT_DASH_LENGTH} ${dashGap ?? DEFAULT_DASH_GAP}`;
 
   // children 크기 변화 감지
   useEffect(() => {
@@ -103,7 +112,7 @@ export const WobblyBox: React.FC<WobblyBoxProps> = ({
             stroke={DEFAULT_STROKE}
             strokeWidth={DEFAULT_STROKE_WIDTH}
             fill={DEFAULT_FILL}
-            style={{ stroke, strokeWidth, fill }}
+            style={{ stroke, strokeWidth, fill, strokeDasharray, strokeDashoffset }}
             strokeLinecap="round"
             strokeLinejoin="round"
           />

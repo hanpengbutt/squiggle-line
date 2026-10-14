@@ -4,7 +4,7 @@ import type { CSSProperties } from 'react';
 /**
  * WobblyBox / WobblyShape 공통 스타일 props
  *
- * 우선순위: 기본값 < `pathClassName` (예: Tailwind `stroke-red-500`) < `stroke` / `fill` / `strokeWidth` props
+ * 우선순위: 기본값 < `pathClassName` (예: Tailwind `stroke-red-500`) < 스타일 props
  */
 export interface SquiggleStyleProps {
   /** 선 색상 */
@@ -17,6 +17,12 @@ export interface SquiggleStyleProps {
   strokeWidth?: number;
   /** 채우기 색상 (기본 'none') */
   fill?: string;
+  /** 점선 선분 길이 (px). 둘 중 하나만 지정하면 다른 값은 기본값 8px이 적용됨 */
+  dashLength?: number;
+  /** 점선 간격 (px). 둘 중 하나만 지정하면 다른 값은 기본값 8px이 적용됨 */
+  dashGap?: number;
+  /** 점선 패턴의 시작 위치 오프셋 (px) */
+  strokeDashoffset?: number;
   /** 내부 `<path>` 요소에 적용할 className. `stroke-*`, `fill-*` 등으로 기본값을 덮어쓸 수 있음 (props가 지정되면 props가 우선) */
   pathClassName?: string;
 }

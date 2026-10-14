@@ -6,6 +6,8 @@ import type { WobblySpeechBubbleProps } from "./types.js";
 const DEFAULT_STROKE = "#1a1a1a";
 const DEFAULT_STROKE_WIDTH = 2;
 const DEFAULT_FILL = "white";
+const DEFAULT_DASH_LENGTH = 8;
+const DEFAULT_DASH_GAP = 8;
 
 /**
  * 텍스트 크기에 맞게 자동으로 조절되는 wobbly 말풍선 컴포넌트.
@@ -39,6 +41,9 @@ export const WobblySpeechBubble: React.FC<WobblySpeechBubbleProps> = ({
   strokeWidth,
   stroke,
   fill,
+  dashLength,
+  dashGap,
+  strokeDashoffset,
   seed = 42,
   className,
   pathClassName,
@@ -49,6 +54,10 @@ export const WobblySpeechBubble: React.FC<WobblySpeechBubbleProps> = ({
 
   // 계산용 선 굵기 (prop 미지정 시 기본값)
   const sw = strokeWidth ?? DEFAULT_STROKE_WIDTH;
+  const strokeDasharray =
+    dashLength === undefined && dashGap === undefined
+      ? undefined
+      : `${dashLength ?? DEFAULT_DASH_LENGTH} ${dashGap ?? DEFAULT_DASH_GAP}`;
 
   // children 크기 변화 감지 (WobblyBox와 동일한 패턴)
   useEffect(() => {
@@ -66,15 +75,22 @@ export const WobblySpeechBubble: React.FC<WobblySpeechBubbleProps> = ({
 
   // 현재 크기로 말풍선 base path 생성
   // size.height = body 높이 + tailHeight (spacer div 포함)
-  const basePath = useSpeechBubblePath(size.width, size.height, {
+  const { bodyPath, tailDotsPath } = useSpeechBubblePath(size.width, size.height, {
     borderRadius,
     tailWidth,
     tailHeight,
     tailType,
   });
 
-  // wobbly 효과 적용
-  const wobblyPath = useSquigglePath(basePath, {
+  // wobbly 효과 적용. Dot 꼬리 원은 별도 path로 그려 dashed stroke에서 제외한다.
+  const wobblyPath = useSquigglePath(bodyPath, {
+    frequency,
+    wiggle,
+    smoothen,
+    strokeWidth: sw,
+    seed,
+  });
+  const wobblyTailDotsPath = useSquigglePath(tailDotsPath, {
     frequency,
     wiggle,
     smoothen,
@@ -97,7 +113,7 @@ export const WobblySpeechBubble: React.FC<WobblySpeechBubbleProps> = ({
         ...style,
       }}
     >
-      {/* Wobbly SVG overlay — body + tail 전체를 덮음 */}
+      {/* Wobbly SVG overlay — Dot 꼬리 원은 실선으로 별도 렌더링 */}
       {size.width > 0 && wobblyPath && (
         <svg
           aria-hidden="true"
@@ -121,10 +137,22 @@ export const WobblySpeechBubble: React.FC<WobblySpeechBubbleProps> = ({
             stroke={DEFAULT_STROKE}
             strokeWidth={DEFAULT_STROKE_WIDTH}
             fill={DEFAULT_FILL}
-            style={{ stroke, strokeWidth, fill }}
+            style={{ stroke, strokeWidth, fill, strokeDasharray, strokeDashoffset }}
             strokeLinecap="round"
             strokeLinejoin="round"
           />
+          {wobblyTailDotsPath && (
+            <path
+              d={wobblyTailDotsPath}
+              className={pathClassName}
+              stroke={DEFAULT_STROKE}
+              strokeWidth={DEFAULT_STROKE_WIDTH}
+              fill={DEFAULT_FILL}
+              style={{ stroke, strokeWidth, fill }}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          )}
         </svg>
       )}
 
