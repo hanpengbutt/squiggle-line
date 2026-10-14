@@ -25,6 +25,9 @@ export default function App() {
   const [wiggle, setWiggle] = useState(16);
   const [smoothen, setSmoothen] = useState(52);
   const [strokeWidth, setStrokeWidth] = useState(6);
+  const [dashEnabled, setDashEnabled] = useState(false);
+  const [dashLength, setDashLength] = useState(8);
+  const [dashGap, setDashGap] = useState(8);
   const [seed, setSeed] = useState(1234);
   const [strokeColor, setStrokeColor] = useState('#1a1a1a');
   const [fillColor, setFillColor] = useState('none'); // 'none' 또는 HEX 색상
@@ -152,9 +155,10 @@ export default function App() {
     if (tab === 'stroke') {
       const radius = selection.cornerRadius ? Math.round(selection.cornerRadius) : 0;
       const componentName = selection.isCustomPath ? 'WobblyShape' : 'WobblyBox';
+      const dashLabel = dashEnabled ? ` dash=${dashLength}/${dashGap}` : '';
       const label = selection.isCustomPath
-        ? `${componentName}(wiggle=${wiggle} smoothen=${smoothen} sw=${strokeWidth} seed=${seed})`
-        : `${componentName}(wiggle=${wiggle} smoothen=${smoothen} sw=${strokeWidth} r=${radius} seed=${seed})`;
+        ? `${componentName}(wiggle=${wiggle} smoothen=${smoothen} sw=${strokeWidth}${dashLabel} seed=${seed})`
+        : `${componentName}(wiggle=${wiggle} smoothen=${smoothen} sw=${strokeWidth}${dashLabel} r=${radius} seed=${seed})`;
 
       parent.postMessage(
         {
@@ -164,13 +168,15 @@ export default function App() {
             strokeColor,
             strokeWidth,
             fillColor,
+            dashPattern: dashEnabled ? [dashLength, dashGap] : [],
             label,
           },
         },
         '*'
       );
     } else {
-      const label = `WobblySpeechBubble(wiggle=${wiggle} smoothen=${smoothen} sw=${strokeWidth} r=${bubbleBorderRadius} tail=${bubbleTailType} seed=${seed})`;
+      const dashLabel = dashEnabled ? ` dash=${dashLength}/${dashGap}` : '';
+      const label = `WobblySpeechBubble(wiggle=${wiggle} smoothen=${smoothen} sw=${strokeWidth}${dashLabel} r=${bubbleBorderRadius} tail=${bubbleTailType} seed=${seed})`;
       parent.postMessage(
         {
           pluginMessage: {
@@ -179,6 +185,7 @@ export default function App() {
             strokeColor,
             strokeWidth,
             fillColor: fillColor === 'none' ? '#ffffff' : fillColor, // 말풍선 기본 fill 흰색
+            dashPattern: dashEnabled ? [dashLength, dashGap] : [],
             label,
             width: bubbleWidth,
             height: bubbleHeight,
@@ -192,18 +199,19 @@ export default function App() {
 
   // 클립보드 복사 코드 생성
   const codeSnippet = useMemo(() => {
+    const dashProps = dashEnabled ? `\n  dashLength={${dashLength}}\n  dashGap={${dashGap}}` : '';
     if (tab === 'stroke') {
       if (!selection.pathData) return '// 피그마에서 Vector, Rectangle 또는 Frame 레이어를 선택하세요.';
       if (selection.isCustomPath) {
-        return `import { WobblyShape } from '@squiggle-line/react';\n\n<WobblyShape\n  d="${selection.pathData}"\n  frequency={${frequency}}\n  wiggle={${wiggle}}\n  smoothen={${smoothen}}\n  strokeWidth={${strokeWidth}}\n  seed={${seed}}\n  stroke="${strokeColor}"\n  fill="${fillColor}"\n  width={${Math.round(selection.width || 100)}}\n  height={${Math.round(selection.height || 100)}}\n/>`;
+        return `import { WobblyShape } from '@squiggle-line/react';\n\n<WobblyShape\n  d="${selection.pathData}"\n  frequency={${frequency}}\n  wiggle={${wiggle}}\n  smoothen={${smoothen}}\n  strokeWidth={${strokeWidth}}${dashProps}\n  seed={${seed}}\n  stroke="${strokeColor}"\n  fill="${fillColor}"\n  width={${Math.round(selection.width || 100)}}\n  height={${Math.round(selection.height || 100)}}\n/>`;
       } else {
         const radius = selection.cornerRadius ? Math.round(selection.cornerRadius) : 0;
-        return `import { WobblyBox } from '@squiggle-line/react';\n\n<WobblyBox\n  frequency={${frequency}}\n  wiggle={${wiggle}}\n  smoothen={${smoothen}}\n  strokeWidth={${strokeWidth}}\n  seed={${seed}}\n  stroke="${strokeColor}"\n  fill="${fillColor}"${radius > 0 ? `\n  borderRadius={${radius}}` : ''}\n>\n  {/* 여기에 컨텐츠가 들어갑니다 */}\n</WobblyBox>`;
+        return `import { WobblyBox } from '@squiggle-line/react';\n\n<WobblyBox\n  frequency={${frequency}}\n  wiggle={${wiggle}}\n  smoothen={${smoothen}}\n  strokeWidth={${strokeWidth}}${dashProps}\n  seed={${seed}}\n  stroke="${strokeColor}"\n  fill="${fillColor}"${radius > 0 ? `\n  borderRadius={${radius}}` : ''}\n>\n  {/* 여기에 컨텐츠가 들어갑니다 */}\n</WobblyBox>`;
       }
     } else {
-      return `import { WobblySpeechBubble } from '@squiggle-line/react';\n\n<WobblySpeechBubble\n  frequency={${frequency}}\n  wiggle={${wiggle}}\n  smoothen={${smoothen}}\n  strokeWidth={${strokeWidth}}\n  seed={${seed}}\n  stroke="${strokeColor}"\n  fill="${fillColor}"\n  padding={${bubblePadding}}\n  borderRadius={${bubbleBorderRadius}}\n  tailWidth={${bubbleTailWidth}}\n  tailHeight={${bubbleTailHeight}}\n  tailType="${bubbleTailType}"\n>\n  {/* 여기에 텍스트가 들어갑니다 */}\n</WobblySpeechBubble>`;
+      return `import { WobblySpeechBubble } from '@squiggle-line/react';\n\n<WobblySpeechBubble\n  frequency={${frequency}}\n  wiggle={${wiggle}}\n  smoothen={${smoothen}}\n  strokeWidth={${strokeWidth}}${dashProps}\n  seed={${seed}}\n  stroke="${strokeColor}"\n  fill="${fillColor}"\n  padding={${bubblePadding}}\n  borderRadius={${bubbleBorderRadius}}\n  tailWidth={${bubbleTailWidth}}\n  tailHeight={${bubbleTailHeight}}\n  tailType="${bubbleTailType}"\n>\n  {/* 여기에 텍스트가 들어갑니다 */}\n</WobblySpeechBubble>`;
     }
-  }, [tab, selection, frequency, wiggle, smoothen, strokeWidth, seed, strokeColor, fillColor, bubblePadding, bubbleBorderRadius, bubbleTailWidth, bubbleTailHeight, bubbleTailType]);
+  }, [tab, selection, frequency, wiggle, smoothen, strokeWidth, seed, strokeColor, fillColor, bubblePadding, bubbleBorderRadius, bubbleTailWidth, bubbleTailHeight, bubbleTailType, dashEnabled, dashLength, dashGap]);
 
   const copyCode = useCallback(async () => {
     try {
@@ -279,6 +287,7 @@ export default function App() {
               d={previewD}
               stroke={strokeColor}
               strokeWidth={Math.min(strokeWidth, 8)}
+              strokeDasharray={dashEnabled ? `${dashLength} ${dashGap}` : undefined}
               fill={fillColor === 'none' ? 'none' : fillColor}
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -387,6 +396,28 @@ export default function App() {
           <input type="range" min="1" max="24" value={strokeWidth} step="0.5"
             onChange={(e) => setStrokeWidth(Number(e.target.value))} />
         </div>
+
+        <div className="fill-toggle-row">
+          <label className="prop-label">Stroke Style</label>
+          <div className="toggle-group">
+            <button className={`toggle-btn ${!dashEnabled ? 'active' : ''}`} onClick={() => setDashEnabled(false)}>Solid</button>
+            <button className={`toggle-btn ${dashEnabled ? 'active' : ''}`} onClick={() => setDashEnabled(true)}>Dashed</button>
+          </div>
+        </div>
+        {dashEnabled && (
+          <>
+            <div className="control-row">
+              <label>Dash Length <span>{dashLength}px</span></label>
+              <input type="range" min="0" max="24" value={dashLength} step="1"
+                onChange={(e) => setDashLength(Number(e.target.value))} />
+            </div>
+            <div className="control-row">
+              <label>Dash Gap <span>{dashGap}px</span></label>
+              <input type="range" min="0" max="24" value={dashGap} step="1"
+                onChange={(e) => setDashGap(Number(e.target.value))} />
+            </div>
+          </>
+        )}
 
         {/* Fill Toggle */}
         <div className="fill-toggle-row">

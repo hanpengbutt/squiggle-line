@@ -115,7 +115,7 @@ function hexToFigmaColor(hex: string) {
 figma.ui.onmessage = (msg) => {
   // 1. 일반 테두리 스트로크 모드
   if (msg.type === 'APPLY_SQUIGGLE_TO_FIGMA') {
-    const { wobblyD, strokeColor, strokeWidth, fillColor, label } = msg;
+    const { wobblyD, strokeColor, strokeWidth, fillColor, dashPattern, label } = msg;
     const selection = figma.currentPage.selection;
     if (selection.length === 0) return;
 
@@ -140,6 +140,7 @@ figma.ui.onmessage = (msg) => {
     vectorNode.strokeWeight = strokeWidth;
     vectorNode.strokeCap = 'ROUND';
     vectorNode.strokeJoin = 'ROUND';
+    vectorNode.dashPattern = dashPattern;
 
     // Solid Fill 설정
     const fillRGB = hexToFigmaColor(fillColor);
@@ -166,7 +167,7 @@ figma.ui.onmessage = (msg) => {
 
   // 2. 말풍선 생성 모드
   if (msg.type === 'APPLY_SPEECH_BUBBLE_TO_FIGMA') {
-    const { wobblyD, strokeColor, strokeWidth, fillColor, label, width, height, hasSelection } = msg;
+    const { wobblyD, strokeColor, strokeWidth, fillColor, dashPattern, label, width, height, hasSelection } = msg;
     const selection = figma.currentPage.selection;
 
     const vectorNode = figma.createVector();
@@ -186,6 +187,7 @@ figma.ui.onmessage = (msg) => {
     vectorNode.strokeWeight = strokeWidth;
     vectorNode.strokeCap = 'ROUND';
     vectorNode.strokeJoin = 'ROUND';
+    vectorNode.dashPattern = dashPattern;
 
     const fillRGB = hexToFigmaColor(fillColor);
     if (fillRGB) {
